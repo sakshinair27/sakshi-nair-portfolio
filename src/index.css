@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: 250 250 249;        /* paper — light bg */
+    --color-surface: 255 255 255;   /* card / nav / section-alt bg */
+    --color-text: 11 18 32;         /* ink — primary text */
+    --color-text-soft: 71 85 105;   /* slate-600 — secondary text */
+    --color-accent: 15 118 110;     /* teal-700 */
+    --color-coral: 217 88 46;       /* burnt coral */
+  }
+
+  html.dark {
+    --color-bg: 8 14 14;            /* near-black, teal-tinted */
+    --color-surface: 15 26 25;      /* deep teal-charcoal */
+    --color-text: 241 245 249;      /* slate-100 */
+    --color-text-soft: 148 163 184; /* slate-400 */
+    --color-accent: 45 212 191;     /* teal-400, brighter for dark contrast */
+    --color-coral: 255 138 92;      /* lighter coral, brighter for dark contrast */
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-paper text-ink font-body antialiased transition-colors duration-200;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading text-ink;
+  }
+  a {
+    @apply decoration-2 underline-offset-2;
+  }
+  ::selection {
+    @apply bg-accent/20;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto max-w-content px-6 sm:px-8;
+  }
+
+  .section {
+    @apply py-16 sm:py-20;
+  }
+
+  .section-label {
+    @apply font-mono text-xs uppercase tracking-[0.2em] text-accent font-semibold;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-ink px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-accent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-ink/15 bg-surface px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border border-ink/10 bg-surface px-3 py-1 text-xs font-mono font-medium text-ink-soft;
+  }
+
+  .nav-link {
+    @apply text-sm font-medium text-ink-soft transition-colors hover:text-accent;
+  }
+
+  .nav-link-active {
+    @apply text-accent;
+  }
+
+  .card {
+    @apply rounded-xl border border-ink/10 bg-surface shadow-sm transition-shadow hover:shadow-md dark:shadow-none dark:hover:border-accent/40;
+  }
+
+  .stat-metric {
+    @apply rounded-lg border border-accent/20 bg-accent/5 px-4 py-3 dark:bg-accent/10;
+  }
+
+  .theme-toggle {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-md border border-ink/15 bg-surface text-ink-soft transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+  }
+
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-paper;
+  }
+
+  .project-index {
+    @apply font-heading text-2xl font-bold text-ink/15 dark:text-ink/20;
+  }
+
+  .status-badge {
+    @apply inline-flex flex-wrap items-center gap-3;
+  }
+
+  .status-badge-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/5 px-4 py-1.5 text-xs font-medium text-ink-soft dark:bg-accent/10;
+  }
+
+  .status-badge-dot {
+    @apply h-1.5 w-1.5 rounded-full bg-accent;
+  }
+
+  .status-badge-line {
+    @apply hidden h-px w-8 bg-coral/50 sm:block;
+  }
+
+  .status-badge-role {
+    @apply font-mono text-xs font-bold uppercase tracking-[0.15em] text-coral;
+  }
+}
