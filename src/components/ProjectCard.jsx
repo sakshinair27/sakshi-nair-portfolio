@@ -27,7 +27,7 @@ export default function ProjectCard({ project }) {
         </Link>
         {project.repoUrl && (
           
-            href={project.repoURL}
+            href={project.repoUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-semibold text-ink-soft transition-colors hover:text-accent"
