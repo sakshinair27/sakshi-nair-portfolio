@@ -25,7 +25,7 @@ export default function FeaturedProjectCard({ project }) {
           <div className="mt-6 flex flex-wrap items-center gap-4">
             {project.repoUrl && (
               
-                href={project.repoUrl}
+                href={project.repoURL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary !py-2.5"
