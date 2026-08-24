@@ -26,7 +26,7 @@ export default function ProjectCard({ project }) {
           Case study
         </Link>
         {project.repoUrl && (
-          
+          <a>
             href={project.repoUrl}
             target="_blank"
             rel="noopener noreferrer"
