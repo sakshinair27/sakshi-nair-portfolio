@@ -37,6 +37,13 @@ const projects = [
     role: "Sole designer and builder — graph architecture, the two-source verification gate, the FastAPI approval webhook, CI via GitHub Actions, and the test suite.",
     repoUrl: "https://github.com/sakshinair27/marketpulse-ai",
     demoUrl: null,
+    stats: [
+      { value: "5", label: "pipeline runs completed — 3 successful, 1 human rejection, 1 recovery" },
+      { value: "60%", label: "run success rate — the rest were isolated failures caught by design, not silent errors" },
+      { value: "<$0.005", label: "cost per run — under half a cent" },
+      { value: "2+", label: "independent sources required before any claim is marked verified" },
+    ],
+    note: "Under a simulated API outage, 1 of 3 parallel research branches failed even after retries — but because failures are isolated per branch instead of aborting the whole graph, the other two completed and the run still produced a usable report.",
   },
   {
     slug: "northwind-retail-analytics",
