@@ -24,7 +24,7 @@ export default function FeaturedProjectCard({ project }) {
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
             {project.repoUrl && (
-               <a>
+               <a
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
