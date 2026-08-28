@@ -16,15 +16,8 @@ export default function Nav({ isDark, setIsDark }) {
           <NavAnchor id="experience" className="nav-link">Experience</NavAnchor>
           <NavAnchor id="contact" className="nav-link">Contact</NavAnchor>
         </div>
-        <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3">
           <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
-          <a
-            href="/resume/Sakshi_Nair_Resume.pdf"
-            download
-            className="btn-secondary !px-4 !py-2 hidden sm:inline-flex"
-          >
-            Resume
-          </a>
           <NavAnchor id="contact" className="btn-primary !px-4 !py-2">
             Contact
           </NavAnchor>
