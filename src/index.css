@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --color-bg: 250 247 241;        /* warm ivory — light bg */
-    --color-surface: 255 253 249;   /* warm off-white — card / nav / section-alt bg */
+    --color-bg: 253 251 247;        /* light warm — light bg */
+    --color-surface: 255 254 251;   /* light warm white — card / nav / section-alt bg */
     --color-text: 11 18 32;         /* ink — primary text */
     --color-text-soft: 71 85 105;   /* slate-600 — secondary text */
     --color-accent: 15 118 110;     /* teal-700 */
