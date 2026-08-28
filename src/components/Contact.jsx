@@ -18,11 +18,8 @@ export default function Contact() {
           <a href="https://linkedin.com/in/sakshinair27" target="_blank" rel="noopener noreferrer" className="btn-secondary">
             LinkedIn ↗
           </a>
-          <a href="https://github.com/sakshinair27" target="_blank" rel="noopener noreferrer" className="btn-secondary">
+                    <a href="https://github.com/sakshinair27" target="_blank" rel="noopener noreferrer" className="btn-secondary">
             GitHub ↗
-          </a>
-          <a href="/resume/Sakshi_Nair_Resume.pdf" download className="btn-secondary">
-            Download résumé
           </a>
         </div>
       </div>
