@@ -9,8 +9,6 @@ export default function Projects() {
     <section id="projects" className="section border-t border-ink/10 bg-surface">
       <div className="container-page">
         <div className="mb-12 flex flex-col gap-3">
-          <p className="section-label">01 — 07</p>
-          <h2 className="text-2xl font-bold sm:text-3xl">Projects</h2>
           <p className="section-label">01 — 08</p>
           <h2 className="text-2xl font-bold sm:text-3xl">Projects</h2>
           <p className="max-w-2xl text-ink-soft">
