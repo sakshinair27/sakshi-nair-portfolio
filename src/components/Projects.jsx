@@ -11,9 +11,12 @@ export default function Projects() {
         <div className="mb-12 flex flex-col gap-3">
           <p className="section-label">01 — 07</p>
           <h2 className="text-2xl font-bold sm:text-3xl">Projects</h2>
+          <p className="section-label">01 — 08</p>
+          <h2 className="text-2xl font-bold sm:text-3xl">Projects</h2>
           <p className="max-w-2xl text-ink-soft">
-            Seven builds spanning agentic AI, multi-tool BI engineering, SQL data warehousing, and
-            applied ML — each with the problem, my approach, and a verified outcome.
+            Eight builds spanning agentic AI, multi-tool BI engineering, SQL data warehousing,
+            applied ML, and production MLOps — each with the problem, my approach, and a verified
+            outcome.
           </p>
         </div>
 
