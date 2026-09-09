@@ -232,10 +232,37 @@ const projects = [
     repoUrl: "https://github.com/sakshinair27/Food-Delivery-EDA-Regression",
     demoUrl: null,
   },
+{
+    slug: "churn-prediction-mlops-platform",
+    number: "08",
+    title: "Churn Prediction MLOps Platform",
+    subtitle: "The other 80% of the job: serving, deployment, and monitoring",
+    category: "MLOps / Production ML",
+    description:
+      "A production-shaped churn classifier — MLflow tracking and model registry, FastAPI serving, Docker + Kubernetes with autoscaling, and Prometheus/Grafana monitoring with automated drift detection, trained on real IBM Telco churn data.",
+    cardSummary:
+      "Took a churn classifier past the notebook stage into a full production system: MLflow-tracked training runs, a FastAPI serving layer, Kubernetes deployment with autoscaling, and Evidently AI drift detection wired into CI so a bad retrain can't silently ship.",
+    cardMetric: (
+      <>
+        <strong className="text-ink">79% recall</strong> <span className="text-ink-soft">at</span>{" "}
+        <strong className="text-ink">F1 = 0.62</strong>{" "}
+        <span className="text-ink-soft">
+          — chosen over a higher-ROC-AUC run because catching more at-risk customers matters more than raw accuracy.
+        </span>
+      </>
+    ),
+    stack: ["Python", "scikit-learn", "MLflow", "FastAPI", "Docker", "Kubernetes", "Prometheus", "Grafana", "Evidently AI", "GitHub Actions"],
+    stackShort: ["MLflow", "FastAPI", "Kubernetes", "Evidently AI"],
+    problem:
+      "Most entry-level ML portfolios stop at a notebook with an accuracy_score printed at the bottom. The actual job is what happens after the model works: how it gets served, deployed, scaled, and monitored once it's making real predictions.",
+    approach:
+      "Built the full lifecycle around a churn classifier trained on the real IBM Telco Customer Churn dataset (7,043 customers, 26.5% real churn rate): MLflow tracks every training run and registers the winning model to a Model Registry, a FastAPI service exposes /predict, /predict/batch, /health, and /metrics behind Pydantic schemas, Docker and Kubernetes (3 replicas, readiness/liveness probes, a HorizontalPodAutoscaler scaling 3–10 pods on CPU/memory) handle deployment, and a Prometheus/Grafana dashboard tracks prediction volume, latency, and error rate. A GitHub Actions pipeline runs training, 17 pytest checks, and a drift-detection gate on every change.",
+    finding:
+      "A 6-run MLflow hyperparameter sweep surfaced a real tradeoff: the highest-ROC-AUC runs (up to 0.84) only caught about 51% of actual churners, while using sample_weight to upweight the minority class (real class imbalance ≈3.5:1) traded some precision for 79% recall at F1 = 0.62 — deliberately promoted to Production in the Model Registry because a missed churner costs more than an unnecessary retention offer. Evidently AI's drift monitor flagged 6 of 15 features (40%) as drifted on a later traffic sample without triggering a full dataset-drift alert, and a CI-gated prediction-sanity test (0.91 vs. 0.065 probability on known high/low-risk samples) guards against a bad retrain silently shipping a directionally wrong model.",
+    metricValue: "79% recall · F1 = 0.62",
+    metricLabel: "Best MLflow-registered run by business cost, not by raw ROC-AUC (0.84 available, but only ~51% recall).",
+    role: "Solo — training pipeline, MLflow registry, FastAPI serving layer, Kubernetes manifests, drift detection, and CI/CD.",
+    repoUrl: "https://github.com/sakshinair27/churn-prediction-mlops-platform",
+    demoUrl: null,
+  },
 ];
-
-export default projects;
-
-export function getProjectBySlug(slug) {
-  return projects.find((p) => p.slug === slug);
-}
