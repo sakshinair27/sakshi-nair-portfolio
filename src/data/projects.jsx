@@ -266,3 +266,9 @@ const projects = [
     demoUrl: null,
   },
 ];
+
+export default projects;
+
+export function getProjectBySlug(slug) {
+  return projects.find((p) => p.slug === slug);
+}
