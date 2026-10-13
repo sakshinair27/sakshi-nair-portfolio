@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="border-t border-ink/10 bg-surface">
-      <div className="container-page flex flex-col items-center justify-between gap-4 py-8 text-sm text-ink-soft sm:flex-row">
+    <footer className="px-4 pb-6 pt-4">
+      <div className="glass mx-auto flex max-w-content flex-col items-center justify-between gap-4 rounded-2xl px-6 py-6 text-sm text-ink-soft sm:flex-row">
         <p>&copy; 2026 Sakshi Nair. Built with React, Vite &amp; Tailwind CSS.</p>
         <div className="flex gap-6">
           <a href="mailto:sakshinair086@gmail.com" className="hover:text-accent">

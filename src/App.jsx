@@ -1,19 +1,26 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
+import CustomCursor from "./components/CustomCursor";
 import Home from "./pages/Home";
 import ProjectDetail from "./pages/ProjectDetail";
-import useTheme from "./hooks/useTheme";
 
 export default function App() {
-  const [isDark, setIsDark] = useTheme();
+  // Dark mode only, always — set at runtime too (not just the static class
+  // on <html> in index.html) so it still applies even if this app is ever
+  // mounted inside a wrapper that doesn't preserve that attribute.
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+  }, []);
 
   return (
     <>
+      <CustomCursor />
       <a href="#main" className="skip-link">
         Skip to main content
       </a>
-      <Nav isDark={isDark} setIsDark={setIsDark} />
+      <Nav />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects/:slug" element={<ProjectDetail />} />

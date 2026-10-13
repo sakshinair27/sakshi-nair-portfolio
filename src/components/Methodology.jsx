@@ -1,34 +1,40 @@
+import useReveal from "../hooks/useReveal";
+
 const principles = [
   {
-    label: "Dashboards",
-    text: "Every dashboard is checked against SQL ground truth before it ships.",
+    label: "Models",
+    text: "Every model is validated on a held-out set before it's promoted to production.",
   },
   {
-    label: "Pipelines",
-    text: "Every ETL path runs twice, independently, and diffs against itself.",
+    label: "Agents",
+    text: "Every agent pauses for human approval before anything ships, and isolates a failed branch instead of taking down the run.",
   },
   {
     label: "Claims",
-    text: "Every claim needs 2+ independent sources before it's marked verified.",
+    text: "Every claim needs 2+ independent sources, or a pre-registered test, before it's marked verified.",
   },
   {
-    label: "Failures",
-    text: "Every failure is isolated, so one bad branch doesn't take down the whole system.",
+    label: "Drift",
+    text: "Every production model is watched for drift, with CI gates that block a retrain that silently regresses.",
   },
 ];
 
 export default function Methodology() {
+  const reveal = useReveal();
   return (
-    <section className="border-t border-ink/10 bg-paper py-10 sm:py-12">
+    <section className="py-12 sm:py-16">
       <div className="container-page">
-        <p className="section-label mb-6 text-center">How I verify</p>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {principles.map((principle) => (
-            <div
-              key={principle.label}
-              className="rounded-lg border border-accent/20 bg-accent/5 px-5 py-4 dark:bg-accent/10"
-            >
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.15em] text-accent">
+        <p className="section-label mb-7 text-center">How I verify</p>
+        <div ref={reveal.ref} className={`grid gap-5 sm:grid-cols-2 lg:grid-cols-4 ${reveal.className}`}>
+          {principles.map((principle, i) => (
+            <div key={principle.label} className="card px-5 py-5" style={{ animationDelay: `${i * 80}ms` }}>
+              <div
+                className="mb-3 flex h-9 w-9 items-center justify-center rounded-full font-mono text-xs font-bold text-accent"
+                style={{ background: "rgb(var(--color-accent) / 0.12)", boxShadow: "0 0 16px -4px rgb(var(--color-accent) / 0.6)" }}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <p className="font-heading text-sm font-bold uppercase tracking-wide text-ink">
                 {principle.label}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">{principle.text}</p>

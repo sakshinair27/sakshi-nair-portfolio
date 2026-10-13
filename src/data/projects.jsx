@@ -4,8 +4,91 @@
 
 const projects = [
   {
-    slug: "marketpulse-ai",
+    slug: "juno-memory-assistant",
     number: "01",
+    title: "Juno — Memory Assistant",
+    subtitle: "A voice/chat assistant that treats memory as a correctness problem",
+    category: "AI / Agentic Systems",
+    description:
+      "A LangGraph-orchestrated voice and chat assistant with long-term memory — atomic-fact extraction, pgvector conflict resolution, relevance-filtered retrieval, and an LLM-judge screen against prompt-injection memory poisoning.",
+    cardSummary:
+      "Built a long-term memory pipeline that stores atomic facts instead of raw transcripts, resolves conflicts with a pgvector similarity search plus an LLM judge (ADD/UPDATE/DELETE/NOOP), and screens every candidate fact for prompt-injection poisoning before it's ever written.",
+    cardMetric: (
+      <>
+        <strong className="text-ink">9/10 contradictions resolved</strong>{" "}
+        <span className="text-ink-soft">
+          on a held-out set (0/10 for an append-only baseline), with a 44% latency cut from backgrounding memory writes.
+        </span>
+      </>
+    ),
+    stack: [
+      "Python",
+      "FastAPI",
+      "LangGraph",
+      "LangChain",
+      "Claude Opus 5.5",
+      "Claude Haiku 4.5",
+      "PostgreSQL · pgvector",
+      "React 19 · TypeScript",
+      "Langfuse",
+      "Docker",
+    ],
+    stackShort: ["LangGraph", "pgvector", "FastAPI", "React · TypeScript", "Langfuse"],
+    problem:
+      "Storing whole chat transcripts and re-retrieving them later is noisy and goes stale fast — and plain similarity search misses things like style preferences ('I prefer concise answers') because they aren't semantically close to the questions they should actually affect. Every write to memory is a correctness problem, not just a storage problem.",
+    approach:
+      "A LangGraph agent orchestrates extraction, storage, conflict resolution, and retrieval. Claude Haiku 4.5 pulls candidate facts from each message and scores them for durability, dropping transient states and questions. Similar stored facts are pulled from pgvector and a judge decides ADD, UPDATE, DELETE, or NOOP — with two fast paths (no similar facts → ADD; near-duplicates at cosine ≥ 0.985 → NOOP) skipping the LLM call entirely, so only the genuinely ambiguous middle band costs a judge call. Every change is logged to a memory_events audit table. The reply returns to the user first, with extraction and reconciliation running afterward on a background worker that preserves message order. Retrieval uses an absolute similarity floor plus a margin against the best hit, and a separate Haiku judge screens every candidate fact for prompt-injection memory poisoning (STORE vs. QUARANTINE) before anything reaches pgvector.",
+    finding:
+      "On a held-out set written after tuning and run once (to keep the number honest), Juno resolved 9/10 contradictions correctly versus 0/10 for an append-only baseline — the one failure was an extraction miss, not a conflict-resolution miss, and was left unfixed rather than patched to inflate the score. Backgrounding memory writes cut time-to-first-reply from 14.2s to 8.0s (44% faster). The poisoning screen blocked 14/14 plain attacks with 0 false positives, and raised the catch rate on attacks disguised as user preferences from 2/5 to 4/5 — though it has a known gap: an instruction to relay something to a third party slipped through, since the screening rules don't yet cover instructions about people other than the user.",
+    metricValue: "9/10 held-out · 44% faster",
+    metricLabel: "Contradiction resolution on a held-out set, and the latency cut from backgrounding memory writes.",
+    role: "Solo — LangGraph orchestration, the extraction/conflict-resolution/retrieval pipeline, the poisoning screen, Langfuse tracing, and the eval suites.",
+    repoUrl: "https://github.com/sakshinair27/juno-memory-assistant",
+    demoUrl: null,
+    stats: [
+      { value: "9/10", label: "contradictions resolved on a held-out set — 0/10 for an append-only baseline" },
+      { value: "44%", label: "faster time-to-first-reply after backgrounding memory writes (14.2s → 8.0s)" },
+      { value: "14/14", label: "plain prompt-injection attacks blocked by the poisoning screen, 0 false positives" },
+      { value: "4/5", label: "attacks disguised as preferences caught by the screen, up from 2/5 without it" },
+    ],
+    note: "The one held-out failure was an extraction miss, not a conflict-resolution miss — left unfixed rather than patched, to keep the number honest.",
+  },
+  {
+    slug: "churn-prediction-mlops-platform",
+    number: "02",
+    title: "Churn Prediction MLOps Platform",
+    subtitle: "The other 80% of the job: serving, deployment, and monitoring",
+    category: "MLOps / Production ML",
+    description:
+      "A production-shaped churn classifier — MLflow tracking and model registry, FastAPI serving, Docker + Kubernetes with autoscaling, and Prometheus/Grafana monitoring with automated drift detection, trained on real IBM Telco churn data.",
+    cardSummary:
+      "Took a churn classifier past the notebook stage into a full production system: MLflow-tracked training runs, a FastAPI serving layer, Kubernetes deployment with autoscaling, and Evidently AI drift detection wired into CI so a bad retrain can't silently ship.",
+    cardMetric: (
+      <>
+        <strong className="text-ink">79% recall</strong> <span className="text-ink-soft">at</span>{" "}
+        <strong className="text-ink">F1 = 0.62</strong>{" "}
+        <span className="text-ink-soft">
+          — chosen over a higher-ROC-AUC run because catching more at-risk customers matters more than raw accuracy.
+        </span>
+      </>
+    ),
+    stack: ["Python", "scikit-learn", "MLflow", "FastAPI", "Docker", "Kubernetes", "Prometheus", "Grafana", "Evidently AI", "GitHub Actions"],
+    stackShort: ["MLflow", "FastAPI", "Kubernetes", "Evidently AI"],
+    problem:
+      "Most entry-level ML portfolios stop at a notebook with an accuracy_score printed at the bottom. The actual job is what happens after the model works: how it gets served, deployed, scaled, and monitored once it's making real predictions.",
+    approach:
+      "Built the full lifecycle around a churn classifier trained on the real IBM Telco Customer Churn dataset (7,043 customers, 26.5% real churn rate): MLflow tracks every training run and registers the winning model to a Model Registry, a FastAPI service exposes /predict, /predict/batch, /health, and /metrics behind Pydantic schemas, Docker and Kubernetes (3 replicas, readiness/liveness probes, a HorizontalPodAutoscaler scaling 3–10 pods on CPU/memory) handle deployment, and a Prometheus/Grafana dashboard tracks prediction volume, latency, and error rate. A GitHub Actions pipeline runs training, 17 pytest checks, and a drift-detection gate on every change.",
+    finding:
+      "A 6-run MLflow hyperparameter sweep surfaced a real tradeoff: the highest-ROC-AUC runs (up to 0.84) only caught about 51% of actual churners, while using sample_weight to upweight the minority class (real class imbalance ≈3.5:1) traded some precision for 79% recall at F1 = 0.62 — deliberately promoted to Production in the Model Registry because a missed churner costs more than an unnecessary retention offer. Evidently AI's drift monitor flagged 6 of 15 features (40%) as drifted on a later traffic sample without triggering a full dataset-drift alert, and a CI-gated prediction-sanity test (0.91 vs. 0.065 probability on known high/low-risk samples) guards against a bad retrain silently shipping a directionally wrong model.",
+    metricValue: "79% recall · F1 = 0.62",
+    metricLabel: "Best MLflow-registered run by business cost, not by raw ROC-AUC (0.84 available, but only ~51% recall).",
+    role: "Solo — training pipeline, MLflow registry, FastAPI serving layer, Kubernetes manifests, drift detection, and CI/CD.",
+    repoUrl: "https://github.com/sakshinair27/churn-prediction-mlops-platform",
+    demoUrl: null,
+  },
+  {
+    slug: "marketpulse-ai",
+    number: "03",
     title: "MarketPulse AI",
     subtitle: "Multi-agent competitive intelligence system",
     category: "AI / Agentic Systems",
@@ -37,49 +120,42 @@ const projects = [
     role: "Sole designer and builder — graph architecture, the two-source verification gate, the FastAPI approval webhook, CI via GitHub Actions, and the test suite.",
     repoUrl: "https://github.com/sakshinair27/marketpulse-ai",
     demoUrl: null,
-    stats: [
-      { value: "5", label: "pipeline runs completed — 3 successful, 1 human rejection, 1 recovery" },
-      { value: "60%", label: "run success rate — the rest were isolated failures caught by design, not silent errors" },
-      { value: "<$0.005", label: "cost per run — under half a cent" },
-      { value: "2+", label: "independent sources required before any claim is marked verified" },
-    ],
-    note: "Under a simulated API outage, 1 of 3 parallel research branches failed even after retries — but because failures are isolated per branch instead of aborting the whole graph, the other two completed and the run still produced a usable report.",
   },
   {
-    slug: "northwind-retail-analytics",
-    number: "02",
-    title: "Northwind Retail Analytics",
-    subtitle: "One data model, three BI tools, zero drift",
-    category: "Business Intelligence",
+    slug: "realtime-payments-analytics",
+    number: "04",
+    title: "Real-Time Payments Analytics",
+    subtitle: "Kafka → Snowflake → dbt → a live dashboard, plus a real A/B test",
+    category: "Data Engineering",
     description:
-      "A star-schema retail warehouse rebuilt as an identical analytics suite across Power BI, Looker, and Tableau, validated dashboard-by-dashboard against SQL ground truth.",
+      "A streaming payments pipeline — Kafka ingestion, Snowflake (Snowpipe) or Postgres storage, dbt transformation, and a live Streamlit dashboard — built around a pre-registered A/B test on decline-retry strategies.",
     cardSummary:
-      "Designed a star-schema warehouse and rebuilt an identical 4-view analytics suite across Power BI, Looker, and Tableau — then validated every dashboard at the monthly grain against SQL ground truth.",
+      "Simulated card-payment traffic through Kafka into Snowflake (or Postgres locally), built per-minute dbt marts with dedup and reconciliation tests, and ran a pre-registered, hash-randomized A/B test comparing retry strategies for declined payments.",
     cardMetric: (
       <>
-        <strong className="text-ink">12/12 dashboards at exact parity</strong>{" "}
+        <strong className="text-ink">+9.3pp recovery lift</strong>{" "}
         <span className="text-ink-soft">
-          after catching a timezone bug in Looker's date bucketing that silently shifted month-end orders.
+          (28.9% → 38.2%, p = 0.0002) from smart backoff vs. immediate retry, with 23% fewer retries sent.
         </span>
       </>
     ),
-    stack: ["SQL", "PostgreSQL", "Power BI · DAX", "Looker · LookML", "Tableau"],
-    stackShort: ["PostgreSQL", "Power BI · DAX", "Looker · LookML", "Tableau"],
+    stack: ["Python", "Apache Kafka", "Snowflake · Snowpipe", "PostgreSQL", "dbt", "Streamlit", "Docker Compose", "Jupyter"],
+    stackShort: ["Kafka", "Snowflake", "dbt", "Streamlit"],
     problem:
-      "Most BI portfolios show one dashboard in one tool. Recruiters and teams need to know a candidate can reason about the underlying data model, not just one vendor's drag-and-drop interface — and that the same metric actually means the same thing no matter which tool renders it.",
+      "A payments team needs to watch approval rates, decline reasons, and processing lag as they happen — not after a nightly batch job — and needs to know, with statistical rigor rather than a gut call, whether a different retry strategy actually recovers more declined transactions.",
     approach:
-      "Designed a star-schema warehouse (1 fact + 5 dimension tables, 77K+ transaction records across 45,000 orders), then rebuilt an identical 4-view analytics suite across Power BI, Looker, and Tableau, authoring 15+ tool-specific measures in DAX, LookML, and calculated fields. Instead of trusting each tool's lifetime totals, I validated every published dashboard at the monthly grain directly against SQL ground-truth queries.",
+      "A generator produces seeded synthetic transactions (~300/min) including duplicate sends, late-arriving events, and periodic processor outages, fed through a 3-partition Kafka topic into either Snowflake via Snowpipe or a local Postgres sink. dbt builds a deduplicated staging table and three per-minute marts (overall metrics, declines by reason, merchant category), tested for grain, accepted values, and reconciliation across warehouses. A Streamlit dashboard reads marts only, deliberately excluding the newest minute from trend lines since late events can still revise it. Alongside the pipeline, a notebook runs a pre-registered A/B test — sample size fixed in advance for 80% power, hash-based arm assignment, a two-proportion z-test, and sample-ratio-mismatch plus A/A checks — comparing immediate retry against a smart-backoff strategy for declined payments.",
     finding:
-      "That validation step surfaced a real bug: Looker's dimension_group defaulted to UTC and silently shifted month-end orders into the following month — a mismatch Power BI and Tableau's naive date bucketing didn't share, so the three tools quietly disagreed. I traced it to the timezone mismatch and fixed it by aligning LookML's model timezone to the source data, re-validating until all three tools matched exactly.",
-    metricValue: "12/12 dashboards at exact parity",
-    metricLabel: "All 4 views × 3 BI tools matched SQL ground truth after the timezone fix.",
-    role: "Solo — data modeling, warehouse build, and all three BI implementations (DAX, LookML, Tableau calculated fields).",
-    repoUrl: "https://github.com/sakshinair27/Northwind-retail-analytics",
+      "Smart backoff recovered 38.2% of declines (270/707) versus 28.9% for immediate retry (207/717) — a +9.3 percentage-point lift (95% CI +4.4 to +14.2, z = 3.73, p = 0.0002) — while sending 23% fewer retries overall. The pre-registration checks held up: sample-ratio mismatch p = 0.79, and the A/A false-positive rate sat at 5.2% across 2,000 simulated splits, in line with the 5% expected. The README is explicit that the transactions are simulated, so the result validates the analysis pipeline itself rather than claiming anything about real card issuers.",
+    metricValue: "+9.3pp recovery · p = 0.0002",
+    metricLabel: "Smart backoff vs. immediate retry on declined-payment recovery rate, pre-registered A/B test.",
+    role: "Solo — pipeline architecture, Kafka/Snowpipe/dbt build, the Streamlit dashboard, and the A/B test design and analysis.",
+    repoUrl: "https://github.com/sakshinair27/realtime-payments-analytics",
     demoUrl: null,
   },
   {
     slug: "commercelens",
-    number: "03",
+    number: "05",
     title: "CommerceLens",
     subtitle: "E-commerce SQL data warehouse",
     category: "Data Engineering",
@@ -110,8 +186,40 @@ const projects = [
     demoUrl: null,
   },
   {
+    slug: "northwind-retail-analytics",
+    number: "06",
+    title: "Northwind Retail Analytics",
+    subtitle: "One data model, three BI tools, zero drift",
+    category: "Business Intelligence",
+    description:
+      "A star-schema retail warehouse rebuilt as an identical analytics suite across Power BI, Looker, and Tableau, validated dashboard-by-dashboard against SQL ground truth.",
+    cardSummary:
+      "Designed a star-schema warehouse and rebuilt an identical 4-view analytics suite across Power BI, Looker, and Tableau — then validated every dashboard at the monthly grain against SQL ground truth.",
+    cardMetric: (
+      <>
+        <strong className="text-ink">12/12 dashboards at exact parity</strong>{" "}
+        <span className="text-ink-soft">
+          after catching a timezone bug in Looker's date bucketing that silently shifted month-end orders.
+        </span>
+      </>
+    ),
+    stack: ["SQL", "PostgreSQL", "Power BI · DAX", "Looker · LookML", "Tableau"],
+    stackShort: ["PostgreSQL", "Power BI · DAX", "Looker · LookML", "Tableau"],
+    problem:
+      "Most BI portfolios show one dashboard in one tool. Recruiters and teams need to know a candidate can reason about the underlying data model, not just one vendor's drag-and-drop interface — and that the same metric actually means the same thing no matter which tool renders it.",
+    approach:
+      "Designed a star-schema warehouse (1 fact + 5 dimension tables, 77K+ transaction records across 45,000 orders), then rebuilt an identical 4-view analytics suite across Power BI, Looker, and Tableau, authoring 15+ tool-specific measures in DAX, LookML, and calculated fields. Instead of trusting each tool's lifetime totals, I validated every published dashboard at the monthly grain directly against SQL ground-truth queries.",
+    finding:
+      "That validation step surfaced a real bug: Looker's dimension_group defaulted to UTC and silently shifted month-end orders into the following month — a mismatch Power BI and Tableau's naive date bucketing didn't share, so the three tools quietly disagreed. I traced it to the timezone mismatch and fixed it by aligning LookML's model timezone to the source data, re-validating until all three tools matched exactly.",
+    metricValue: "12/12 dashboards at exact parity",
+    metricLabel: "All 4 views × 3 BI tools matched SQL ground truth after the timezone fix.",
+    role: "Solo — data modeling, warehouse build, and all three BI implementations (DAX, LookML, Tableau calculated fields).",
+    repoUrl: "https://github.com/sakshinair27/Northwind-retail-analytics",
+    demoUrl: null,
+  },
+  {
     slug: "ipl-match-prediction",
-    number: "04",
+    number: "07",
     title: "IPL Match Outcome & Score Prediction",
     subtitle: "14 years of cricket data, three prediction targets",
     category: "Machine Learning",
@@ -142,7 +250,7 @@ const projects = [
   },
   {
     slug: "syn-flood-detection",
-    number: "05",
+    number: "08",
     title: "SYN Flood Attack Detection",
     subtitle: "Lightweight, host-based intrusion detection",
     category: "Systems / Security",
@@ -173,7 +281,7 @@ const projects = [
   },
   {
     slug: "employee-tracker-dashboard",
-    number: "06",
+    number: "09",
     title: "Employee Tracker & Analytics Dashboard",
     subtitle: "Full-stack HR analytics, replacing manual Excel",
     category: "Full-Stack / BI",
@@ -204,7 +312,7 @@ const projects = [
   },
   {
     slug: "food-delivery-eda",
-    number: "07",
+    number: "10",
     title: "Food Delivery EDA & Regression",
     subtitle: "What actually predicts delivery time",
     category: "Statistics",
@@ -230,39 +338,6 @@ const projects = [
     metricLabel: "10.4 min → 5.74 min by switching to robust regression; R² = 0.78 overall.",
     role: "Solo — EDA, regression modeling, and residual diagnostics.",
     repoUrl: "https://github.com/sakshinair27/Food-Delivery-EDA-Regression",
-    demoUrl: null,
-  },
-{
-    slug: "churn-prediction-mlops-platform",
-    number: "08",
-    title: "Churn Prediction MLOps Platform",
-    subtitle: "The other 80% of the job: serving, deployment, and monitoring",
-    category: "MLOps / Production ML",
-    description:
-      "A production-shaped churn classifier — MLflow tracking and model registry, FastAPI serving, Docker + Kubernetes with autoscaling, and Prometheus/Grafana monitoring with automated drift detection, trained on real IBM Telco churn data.",
-    cardSummary:
-      "Took a churn classifier past the notebook stage into a full production system: MLflow-tracked training runs, a FastAPI serving layer, Kubernetes deployment with autoscaling, and Evidently AI drift detection wired into CI so a bad retrain can't silently ship.",
-    cardMetric: (
-      <>
-        <strong className="text-ink">79% recall</strong> <span className="text-ink-soft">at</span>{" "}
-        <strong className="text-ink">F1 = 0.62</strong>{" "}
-        <span className="text-ink-soft">
-          — chosen over a higher-ROC-AUC run because catching more at-risk customers matters more than raw accuracy.
-        </span>
-      </>
-    ),
-    stack: ["Python", "scikit-learn", "MLflow", "FastAPI", "Docker", "Kubernetes", "Prometheus", "Grafana", "Evidently AI", "GitHub Actions"],
-    stackShort: ["MLflow", "FastAPI", "Kubernetes", "Evidently AI"],
-    problem:
-      "Most entry-level ML portfolios stop at a notebook with an accuracy_score printed at the bottom. The actual job is what happens after the model works: how it gets served, deployed, scaled, and monitored once it's making real predictions.",
-    approach:
-      "Built the full lifecycle around a churn classifier trained on the real IBM Telco Customer Churn dataset (7,043 customers, 26.5% real churn rate): MLflow tracks every training run and registers the winning model to a Model Registry, a FastAPI service exposes /predict, /predict/batch, /health, and /metrics behind Pydantic schemas, Docker and Kubernetes (3 replicas, readiness/liveness probes, a HorizontalPodAutoscaler scaling 3–10 pods on CPU/memory) handle deployment, and a Prometheus/Grafana dashboard tracks prediction volume, latency, and error rate. A GitHub Actions pipeline runs training, 17 pytest checks, and a drift-detection gate on every change.",
-    finding:
-      "A 6-run MLflow hyperparameter sweep surfaced a real tradeoff: the highest-ROC-AUC runs (up to 0.84) only caught about 51% of actual churners, while using sample_weight to upweight the minority class (real class imbalance ≈3.5:1) traded some precision for 79% recall at F1 = 0.62 — deliberately promoted to Production in the Model Registry because a missed churner costs more than an unnecessary retention offer. Evidently AI's drift monitor flagged 6 of 15 features (40%) as drifted on a later traffic sample without triggering a full dataset-drift alert, and a CI-gated prediction-sanity test (0.91 vs. 0.065 probability on known high/low-risk samples) guards against a bad retrain silently shipping a directionally wrong model.",
-    metricValue: "79% recall · F1 = 0.62",
-    metricLabel: "Best MLflow-registered run by business cost, not by raw ROC-AUC (0.84 available, but only ~51% recall).",
-    role: "Solo — training pipeline, MLflow registry, FastAPI serving layer, Kubernetes manifests, drift detection, and CI/CD.",
-    repoUrl: "https://github.com/sakshinair27/churn-prediction-mlops-platform",
     demoUrl: null,
   },
 ];

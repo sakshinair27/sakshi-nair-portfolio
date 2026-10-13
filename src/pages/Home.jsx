@@ -13,9 +13,9 @@ export default function Home() {
   const location = useLocation();
 
   useDocumentHead({
-    title: "Sakshi Nair — Data Analyst & Data Engineer",
+    title: "Sakshi Nair — AI Engineer & Data Scientist",
     description:
-      "I build the verified side of data analytics: BI dashboards audited against SQL ground truth, production-grade PostgreSQL/dbt warehouses, and the ML pipelines feeding them.",
+      "I build the verified side of applied AI: agentic LangGraph pipelines and RAG systems validated against ground truth, MLOps platforms that monitor and gate their own drift, and the data infrastructure feeding them.",
     path: "/",
   });
 
@@ -36,8 +36,8 @@ export default function Home() {
   return (
     <main id="main">
       <Hero />
-      <Methodology />
       <About />
+      <Methodology />
       <Projects />
       <Skills />
       <Experience />

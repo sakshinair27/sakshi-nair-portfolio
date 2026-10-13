@@ -24,7 +24,7 @@ export default function FeaturedProjectCard({ project }) {
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
             {project.repoUrl && (
-               <a
+              <a
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -52,7 +52,7 @@ export default function FeaturedProjectCard({ project }) {
             ))}
           </div>
           {project.note && (
-            <p className="mt-5 border-t border-ink/10 pt-4 font-mono text-xs leading-relaxed text-ink-soft">
+            <p className="mt-5 border-t border-white/10 pt-4 font-mono text-xs leading-relaxed text-ink-soft">
               {project.note}
             </p>
           )}

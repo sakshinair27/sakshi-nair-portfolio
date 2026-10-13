@@ -49,9 +49,9 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      <section className="section border-t border-ink/10 bg-surface !pt-12">
-        <div className="container-page grid gap-12 lg:grid-cols-[2fr_1fr]">
-          <div className="space-y-10">
+      <section className="section !pt-4">
+        <div className="container-page grid gap-8 lg:grid-cols-[2fr_1fr]">
+          <div className="card space-y-10 p-7 sm:p-10">
             <div>
               <h2 className="mb-3 font-heading text-xl font-bold">The problem</h2>
               <p className="leading-relaxed text-ink-soft">{project.problem}</p>
@@ -92,8 +92,8 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      <section className="section border-t border-ink/10">
-        <div className="container-page flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+      <section className="section !pt-4">
+        <div className="container-page card flex flex-col items-start justify-between gap-6 p-7 sm:flex-row sm:items-center sm:p-10">
           <div>
             <h2 className="font-heading text-xl font-bold">Want the details?</h2>
             <p className="mt-1 text-ink-soft">Full code, docs, and commit history are on GitHub.</p>

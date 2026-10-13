@@ -6,14 +6,17 @@ export default {
     extend: {
       colors: {
         paper: "rgb(var(--color-bg) / <alpha-value>)",
-        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        surface: {
+          DEFAULT: "rgb(var(--color-surface) / <alpha-value>)",
+          raised: "rgb(var(--color-surface-raised) / <alpha-value>)",
+        },
         ink: {
           DEFAULT: "rgb(var(--color-text) / <alpha-value>)",
           soft: "rgb(var(--color-text-soft) / <alpha-value>)",
         },
         accent: {
           DEFAULT: "rgb(var(--color-accent) / <alpha-value>)",
-          light: "#14B8A6",
+          light: "#5EEAD4",
           dark: "#0F766E",
         },
         coral: {

@@ -4,28 +4,26 @@
 
 @layer base {
   :root {
-    --color-bg: 245 230 208;        /* warm tan — light bg */
-    --color-surface: 250 240 224;   /* warm tan white — card / nav / section-alt bg */
-    --color-text: 11 18 32;         /* ink — primary text */
-    --color-text-soft: 71 85 105;   /* slate-600 — secondary text */
-    --color-accent: 15 118 110;     /* teal-700 */
-    --color-coral: 217 88 46;       /* burnt coral */
-  }
-
-  html.dark {
-    --color-bg: 8 14 14;            /* near-black, teal-tinted */
-    --color-surface: 15 26 25;      /* deep teal-charcoal */
-    --color-text: 241 245 249;      /* slate-100 */
-    --color-text-soft: 148 163 184; /* slate-400 */
-    --color-accent: 45 212 191;     /* teal-400, brighter for dark contrast */
-    --color-coral: 255 138 92;      /* lighter coral, brighter for dark contrast */
+    --color-bg: 6 8 14;
+    --color-surface: 16 20 30;
+    --color-surface-raised: 22 27 40;
+    --color-text: 236 240 245;
+    --color-text-soft: 150 162 180;
+    --color-accent: 56 232 213;
+    --color-coral: 255 138 92;
   }
 
   html {
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-paper text-ink font-body antialiased transition-colors duration-200;
+    @apply bg-paper text-ink font-body antialiased;
+    background-image:
+      radial-gradient(ellipse 65% 45% at 18% -8%, rgb(var(--color-accent) / 0.16), transparent 60%),
+      radial-gradient(ellipse 55% 40% at 100% 10%, rgb(168 85 247 / 0.10), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 50% 100%, rgb(var(--color-accent) / 0.08), transparent 60%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
   h1, h2, h3, h4 {
     @apply font-heading text-ink;
@@ -34,7 +32,20 @@
     @apply decoration-2 underline-offset-2;
   }
   ::selection {
-    @apply bg-accent/20;
+    @apply bg-accent/25;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-paper;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-white/10;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent/50;
   }
 }
 
@@ -44,43 +55,57 @@
   }
 
   .section {
-    @apply py-16 sm:py-20;
+    @apply py-16 sm:py-24;
   }
 
   .section-label {
     @apply font-mono text-xs uppercase tracking-[0.2em] text-accent font-semibold;
   }
 
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-ink px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-accent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
-  }
+  /* --- glass surfaces --- */
 
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-ink/15 bg-surface px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
-  }
-
-  .chip {
-    @apply inline-flex items-center rounded-full border border-ink/10 bg-surface px-3 py-1 text-xs font-mono font-medium text-ink-soft;
-  }
-
-  .nav-link {
-    @apply text-sm font-medium text-ink-soft transition-colors hover:text-accent;
-  }
-
-  .nav-link-active {
-    @apply text-accent;
+  .glass {
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02));
+    border: 1px solid rgb(255 255 255 / 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
   .card {
-    @apply rounded-xl border border-ink/10 bg-surface shadow-sm transition-shadow hover:shadow-md dark:shadow-none dark:hover:border-accent/40;
+    @apply glass relative rounded-2xl shadow-[0_1px_0_rgb(255_255_255/0.06)_inset] transition-all duration-300;
+  }
+  .card:hover {
+    @apply -translate-y-1 border-accent/40;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 20px 60px -24px rgb(var(--color-accent) / 0.35);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#03120f] transition-all duration-200;
+    box-shadow: 0 0 0 1px rgb(var(--color-accent) / 0.5), 0 8px 30px -8px rgb(var(--color-accent) / 0.55);
+  }
+  .btn-primary:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 0 0 1px rgb(var(--color-accent) / 0.7), 0 12px 36px -8px rgb(var(--color-accent) / 0.75);
+  }
+  .btn-primary:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-accent;
+  }
+
+  .btn-secondary {
+    @apply glass inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-ink transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/50 hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+  }
+
+  .chip {
+    @apply glass inline-flex items-center rounded-full px-3 py-1 text-xs font-mono font-medium text-ink-soft;
+  }
+
+  .nav-link {
+    @apply relative text-sm font-medium text-ink-soft transition-colors hover:text-ink after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all after:duration-200 hover:after:w-full;
   }
 
   .stat-metric {
-    @apply rounded-lg border border-accent/20 bg-accent/5 px-4 py-3 dark:bg-accent/10;
-  }
-
-  .theme-toggle {
-    @apply inline-flex h-9 w-9 items-center justify-center rounded-md border border-ink/15 bg-surface text-ink-soft transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+    @apply glass rounded-xl px-4 py-3.5;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 0 24px -12px rgb(var(--color-accent) / 0.25);
   }
 
   .skip-link {
@@ -88,7 +113,7 @@
   }
 
   .project-index {
-    @apply font-heading text-2xl font-bold text-ink/15 dark:text-ink/20;
+    @apply font-heading text-2xl font-bold text-ink/10;
   }
 
   .status-badge {
@@ -96,18 +121,164 @@
   }
 
   .status-badge-pill {
-    @apply inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/5 px-4 py-1.5 text-xs font-medium text-ink-soft dark:bg-accent/10;
+    @apply glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-ink-soft;
   }
 
   .status-badge-dot {
     @apply h-1.5 w-1.5 rounded-full bg-accent;
+    box-shadow: 0 0 8px 1px rgb(var(--color-accent) / 0.8);
   }
 
-  .status-badge-line {
-    @apply hidden h-px w-8 bg-coral/50 sm:block;
+  .pill-tab {
+    @apply glass rounded-full px-3.5 py-1.5 font-mono text-xs font-medium transition-all duration-200;
   }
+  .pill-tab-active {
+    @apply border-accent/60 text-accent;
+    box-shadow: 0 0 0 1px rgb(var(--color-accent) / 0.4), 0 0 20px -6px rgb(var(--color-accent) / 0.6);
+  }
+  .pill-tab-inactive {
+    @apply text-ink-soft hover:border-accent/30 hover:text-accent;
+  }
+}
 
-  .status-badge-role {
-    @apply font-mono text-xs font-bold uppercase tracking-[0.15em] text-coral;
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.reveal-visible {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
+  .reveal-visible {
+    animation: none;
+  }
+}
+
+.type-caret {
+  display: inline-block;
+  width: 3px;
+  margin-left: 2px;
+  background: rgb(var(--color-accent));
+  box-shadow: 0 0 8px 1px rgb(var(--color-accent) / 0.8);
+  animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+  0%, 45% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .type-caret {
+    animation: none;
+  }
+}
+
+.live-bg-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.5) 30%, black 55%),
+    linear-gradient(to bottom, black 70%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.5) 30%, black 55%),
+    linear-gradient(to bottom, black 70%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.live-bg-square {
+  position: absolute;
+  border: 1.5px solid rgb(var(--color-accent) / 0.25);
+  border-radius: 14px;
+  background: rgb(var(--color-accent) / 0.04);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 40px -12px rgb(var(--color-accent) / 0.4);
+  animation: float-square 14s ease-in-out infinite;
+}
+.live-bg-square--1 {
+  top: 12%;
+  right: 8%;
+  height: 90px;
+  width: 90px;
+  animation-duration: 16s;
+}
+.live-bg-square--2 {
+  top: 55%;
+  right: 22%;
+  height: 48px;
+  width: 48px;
+  border-color: rgb(168 85 247 / 0.3);
+  box-shadow: 0 0 30px -10px rgb(168 85 247 / 0.5);
+  animation-duration: 12s;
+  animation-delay: -4s;
+}
+.live-bg-square--3 {
+  top: 30%;
+  right: 38%;
+  height: 26px;
+  width: 26px;
+  animation-duration: 10s;
+  animation-delay: -7s;
+}
+
+@keyframes float-square {
+  0%, 100% { transform: translateY(0) rotate(12deg); }
+  50% { transform: translateY(-22px) rotate(-6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-bg-square {
+    animation: none;
+  }
+}
+
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  height: 6px;
+  width: 6px;
+  border-radius: 9999px;
+  background: rgb(var(--color-accent));
+  box-shadow: 0 0 10px 2px rgb(var(--color-accent) / 0.8);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  height: 32px;
+  width: 32px;
+  border-radius: 9999px;
+  border: 1.5px solid rgb(var(--color-accent) / 0.55);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform;
+}
+
+.custom-cursor-ring--hover {
+  width: 52px;
+  height: 52px;
+  border-color: rgb(var(--color-accent) / 0.85);
+  background: rgb(var(--color-accent) / 0.1);
+  box-shadow: 0 0 24px 2px rgb(var(--color-accent) / 0.4);
 }
